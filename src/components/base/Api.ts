@@ -1,3 +1,5 @@
+import { IOrderResult, IProduct } from "../../types";
+
 type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export class Api {
@@ -35,3 +37,4 @@ export class Api {
         }).then(this.handleResponse<T>);
     }
 }
+
