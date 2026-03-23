@@ -1,19 +1,17 @@
 import { IBuyer } from "../../types";
 export type FormErrors = Partial<Record<keyof IBuyer, string>>;
 
-export class Buyer implements IBuyer{
+export class Buyer {
     protected _payment: "card" | "cash" = "card";
     protected _email: string = "";
     protected _phone: string = "";
     protected _address: string = "";
     
-    get payment() { return this._payment; }
-    get email() { return this._email; }
-    get phone() { return this._phone; }
-    get address() { return this._address; }
-    
     saveBuyerData(data: Partial<IBuyer>): void {
-        Object.assign(this, data);
+       if(data.payment) this._payment = data.payment;
+       if(data.email) this._email = data.email;
+       if(data.phone) this._phone = data.phone;
+       if(data.address) this._address = data.address;
     }
 
     getBuyerData():IBuyer{
