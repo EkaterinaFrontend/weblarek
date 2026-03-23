@@ -1,4 +1,4 @@
-import { IProduct } from "../../../types";
+import { IProduct } from "../../types";
 
 export class Basket{
    protected items: IProduct[] = [];
@@ -18,13 +18,10 @@ export class Basket{
     this.items = [];
    }
 
-   getPrice():number{
-    let sum = 0;
-    for(let item of this.items){
-        sum += item.price || 0
-    }
-    return sum;
-   }
+   getPrice(): number {
+    return this.items.reduce((sum, item) => sum + (item.price || 0), 0);
+}
+
 
    getCountProduct():number{
         return this.items.length;
