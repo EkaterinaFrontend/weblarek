@@ -1,4 +1,6 @@
 import { IBuyer } from "../../types";
+import { IEvents } from "../base/Events";
+
 export type FormErrors = Partial<Record<keyof IBuyer, string>>;
 
 export class Buyer {
@@ -6,7 +8,9 @@ export class Buyer {
     protected _email: string = "";
     protected _phone: string = "";
     protected _address: string = "";
-    
+    formErrors: FormErrors = {};
+
+    constructor(protected events: IEvents) {}
     saveBuyerData(data: Partial<IBuyer>): void {
        if(data.payment) this._payment = data.payment;
        if(data.email) this._email = data.email;
@@ -30,23 +34,28 @@ export class Buyer {
         this._address = "";
     }
 
-    validate(): FormErrors {
-        const errors: FormErrors = {};
-        
-        if(!this._payment){
-            errors.payment = "Не выбран вид оплаты";
-        }
-        if(!this._email){
-            errors.email = "Укажите email";
-        }
-        if(!this._phone){
-            errors.phone = "Укажите номер телефона";
-        }
-        if(!this._address){
-            errors.address = "Укажите адрес доставки";
-        }
-        return errors;
+    setBuyerField(field: keyof IBuyer, value:string){
+       if (field === 'payment') this._payment = value as "card" | "cash";
+        else if (field === 'email') this._email = value;
+        else if (field === 'phone') this._phone = value;
+        else if (field === 'address') this._address = value;
+
+        this.validate();
     }
+
+    validate(): boolean{
+        const errors:FormErrors = {};
+        if(!this._email) errors.email = 'Необходимо указать email';
+        if(!this._phone) errors.phone = 'Необходимо указать телефон';
+        if(!this._address) errors.address = 'Необходимо указать адрес';
+        if(!this._payment) errors.payment = 'Выберите способ оплаты';
+
+        this.formErrors = errors;
+        this.events.emit('formErrors:change', this.formErrors);
+        return Object.keys(errors).length === 0;
+    }
+
+
     isValid():boolean{
         const errors = this.validate();
         return Object.keys(errors).length === 0;

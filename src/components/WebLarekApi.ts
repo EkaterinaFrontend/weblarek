@@ -9,8 +9,8 @@ export class WebLarekApi {
         this.cdn = cdn;
     }
     getProducts():Promise<IProduct[]> {
-        return this._baseApi.get<IProductResponse>
-        ('/product').then((data) => 
+        return this._baseApi.get<{ items: IProduct[] }>('/product').then((data) =>
+      
     
             data.items.map((item) => ({
                 ...item,
@@ -18,7 +18,7 @@ export class WebLarekApi {
             }))
         );
 }
-    orderProducts(order:IOrder):Promise<IOrderResult> {
+   postOrder(order:IOrder):Promise<IOrderResult> {
         return this._baseApi.post<IOrderResult>('/order', order)
         .then((data)=> data);
     }
