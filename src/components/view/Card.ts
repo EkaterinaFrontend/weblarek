@@ -9,29 +9,14 @@ interface ICardActions {
 export class Card extends Component<IProduct> {
     protected _title: HTMLElement;
     protected _price: HTMLElement;
-    protected _image?: HTMLImageElement;
-    protected _category?: HTMLElement;
-    protected _text?: HTMLElement;
-    protected _button?: HTMLButtonElement;
 
-    constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
+    constructor(protected blockName: string, container: HTMLElement) {
         super(container); 
 
         this._title = container.querySelector(`.${blockName}__title`) as HTMLElement;
         this._price = container.querySelector(`.${blockName}__price`) as HTMLElement;
-        this._image = container.querySelector(`.${blockName}__image`) as HTMLImageElement;
-        this._category = container.querySelector(`.${blockName}__category`) as HTMLElement;
-        this._text = container.querySelector(`.${blockName}__text`) as HTMLElement;
-        this._button = container.querySelector(`.${blockName}__button`) as HTMLButtonElement;
-
-        if (actions?.onClick) {
-            if (this._button) {
-                this._button.addEventListener('click', actions.onClick);
-            } else {
-                container.addEventListener('click', actions.onClick);
-            }
-        }
     }
+ 
 
     set title(value: string) {
         this.setText(this._title, value);
@@ -39,36 +24,83 @@ export class Card extends Component<IProduct> {
 
     set price(value: number | null) {
         this.setText(this._price, value ? `${value} синапсов` : 'Бесценно');
-        if (this._button && value === null) {
+    }
+}
+
+export class CardCatalog extends Card{
+     protected _image: HTMLImageElement;
+    protected _category: HTMLElement;
+
+    constructor(container: HTMLElement, actions?: ICardActions) {
+        super('card', container);
+        this._image = container.querySelector(`.card__image`) as HTMLImageElement;
+        this._category = container.querySelector(`.card__category`) as HTMLElement;
+
+        if (actions?.onClick) {
+            container.addEventListener('click', actions.onClick);
+        }
+}
+
+set image(value:string){
+    this.setImage(this._image, value, this.title);
+}
+   
+set category(value:string){
+    this.setText(this._category,value);
+    this.toggleClass(this._category, categoryMap[value as keyof typeof categoryMap],true);
+}
+}
+
+export class CardPreview extends CardCatalog {
+    protected _text:HTMLElement;
+    protected _button:HTMLButtonElement;
+
+    constructor(container:HTMLElement,actions?:ICardActions){
+        super(container);
+        this._text = container.querySelector(`.card__text`) as HTMLElement;
+        this._button = container.querySelector(`.card__button`) as HTMLButtonElement;
+
+        if(actions?.onClick){
+             this._button.addEventListener('click', actions.onClick);
+        }
+    }
+    set text(value:string){
+        this.setText(this._text, value);
+    }
+    set buttonText(value:string){
+        this.setText(this._button, value);
+    }
+     set price(value: number | null) {
+        super.price = value;
+        if (value === null) {
             this.setDisabled(this._button, true);
             this.setText(this._button, 'Недоступно');
         }
     }
+}
 
-    set image(value: string) {
-        if (this._image) {
-            this.setImage(this._image, value, this.title);
-    }
-    }
+export class CardBasket extends Card {
+    protected _button: HTMLButtonElement;
+    protected _index: HTMLElement;
 
-    set category(value: string) {
-        if (this._category) {
-        this.setText(this._category, value);
-        if (categoryMap && value in categoryMap) {
-            this.toggleClass(this._category, categoryMap[value as keyof typeof categoryMap], true);
+    constructor(container:HTMLElement,actions?:ICardActions){
+        super('card',container);
+        this._button = container.querySelector(`.card__button`) as HTMLButtonElement;
+        this._index = container.querySelector(`.basket__item-index`) as HTMLElement;
+
+        if(actions?.onClick){
+            this._button.addEventListener('click', actions.onClick);
         }
     }
-}
-
-    set text(value: string) {
-        if (this._text) {
-        this.setText(this._text, value);
-    }    
-}
-
-    set buttonText(value: string) {
-        if (this._button) {
-            this.setText(this._button, value);
-        }
+     set index(value: number) {
+        this.setText(this._index, String(value));
     }
 }
+
+
+
+
+
+
+
+   

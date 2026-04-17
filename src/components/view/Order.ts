@@ -4,6 +4,7 @@ import { Form } from "../Models/form";
 
 
 
+
 export class Order extends Form<IBuyer> {
     protected _buttons: HTMLButtonElement[];
 
@@ -13,7 +14,6 @@ export class Order extends Form<IBuyer> {
 
         this._buttons.forEach(button => {
             button.addEventListener('click', () => {
-                this.payment = button.name;
                 this.onInputChange('payment', button.name);
             });
         });

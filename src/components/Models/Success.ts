@@ -1,6 +1,7 @@
 import { Component } from "../base/Component";
 
 
+
 interface ISuccess {
     total:number;
 }
